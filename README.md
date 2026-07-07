@@ -1,10 +1,10 @@
 # DW_Universidad
 
-Proyecto de diseño e implementación de un Data Warehouse para el análisis del rendimiento académico de estudiantes universitarios.
+> Proyecto de diseño e implementación de un Data Warehouse para el análisis del rendimiento académico de estudiantes universitarios.
 
 Este proyecto utiliza un proceso ETL para extraer, limpiar y cargar datos académicos de alumnos. El objetivo es integrar información relacionada con estudiantes, carreras, promedio, asistencia y accesos a Moodle, con el fin de preparar los datos para análisis académico, minería de datos o proyectos de Machine Learning.
 
-## Caso de estudio
+## Descripción general
 
 La Universidad Tecnológica Montemorelos cuenta con información académica distribuida en diferentes fuentes, como el Sistema Escolar, la plataforma Moodle y archivos de Excel de Servicios Escolares.
 
@@ -38,110 +38,97 @@ Proyecto_DataWarehouse/
 ├── Documentacion/
 │   └── Reporte.pdf
 └── README.md
-Descripción de carpetas
-DatosOriginales
+```
 
-Contiene el archivo alumnos.xlsx, el cual incluye los registros originales de estudiantes con errores intencionales. Estos errores fueron agregados para simular una base de datos real con problemas de calidad.
+### Descripción de carpetas
 
-DatosProcesados
+- DatosOriginales: contiene el archivo alumnos.xlsx con los registros originales de estudiantes y errores intencionales para simular una base de datos real con problemas de calidad.
+- DatosProcesados: contiene el archivo alumnos_limpios.csv, generado tras aplicar el proceso de limpieza en Power Query.
+- DataWarehouse: contiene el archivo ScriptSQL.sql con la creación de la base de datos, tablas de dimensiones, tabla de hechos y carga de datos.
+- Diagramas: contiene el archivo esquema_estrella.png con el diseño del Data Warehouse en modelo estrella.
+- Documentacion: contiene el reporte final del proyecto en formato PDF con la introducción, caso de estudio, fuentes de datos, proceso ETL, limpieza, diseño y conclusiones.
 
-Contiene el archivo alumnos_limpios.csv, generado después de aplicar el proceso de limpieza en Power Query. Este archivo contiene los datos listos para ser cargados al Data Warehouse.
+## Proceso ETL
 
-DataWarehouse
-
-Contiene el archivo ScriptSQL.sql, donde se encuentra el código utilizado para crear la base de datos universidad_dw, las tablas de dimensiones, la tabla de hechos y la carga de datos.
-
-Diagramas
-
-Contiene el archivo esquema_estrella.png, que representa el diseño del Data Warehouse mediante un modelo estrella.
-
-Documentacion
-
-Contiene el reporte final del proyecto en formato PDF, incluyendo introducción, caso de estudio, tipos y fuentes de datos, proceso ETL, limpieza de datos, diseño del Data Warehouse, configuración y conclusiones.
-
-Proceso ETL
-Extracción
+### 1. Extracción
 
 Los datos fueron extraídos desde el archivo alumnos.xlsx utilizando Power Query en Microsoft Excel.
 
-Transformación
+### 2. Transformación
 
 Se aplicaron técnicas de limpieza de datos, incluyendo:
 
-Eliminación de registros duplicados.
-Corrección de edades ilógicas.
-Corrección de promedios fuera de rango.
-Corrección de asistencias inválidas.
-Reemplazo de campos vacíos.
-Creación de la columna nivel_academico.
+- Eliminación de registros duplicados
+- Corrección de edades ilógicas
+- Corrección de promedios fuera de rango
+- Corrección de asistencias inválidas
+- Reemplazo de campos vacíos
+- Creación de la columna nivel_academico
 
 La clasificación del nivel académico se realizó con las siguientes reglas:
 
-Promedio	Nivel académico
-90 - 100	Excelente
-80 - 89	Bueno
-70 - 79	Regular
-Menor a 70	Riesgo
-Carga
+| Promedio | Nivel académico |
+| --- | --- |
+| 90 - 100 | Excelente |
+| 80 - 89 | Bueno |
+| 70 - 79 | Regular |
+| Menor a 70 | Riesgo |
+
+### 3. Carga
 
 Los datos limpios fueron exportados como alumnos_limpios.csv y cargados en MySQL Workbench dentro de una tabla auxiliar llamada alumnos_limpios.
 
 Posteriormente, la información fue distribuida en las tablas del esquema estrella:
 
-dim_alumno
-dim_carrera
-dim_tiempo
-dim_materia
-dim_profesor
-hechos_rendimiento
-Diseño del Data Warehouse
+- dim_alumno
+- dim_carrera
+- dim_tiempo
+- dim_materia
+- dim_profesor
+- hechos_rendimiento
+
+## Diseño del Data Warehouse
 
 El Data Warehouse fue diseñado utilizando un esquema estrella.
 
-La tabla central es:
+### Tabla central
 
-hechos_rendimiento
+- hechos_rendimiento
 
-Las dimensiones son:
+### Dimensiones
 
-dim_alumno
-dim_carrera
-dim_tiempo
-dim_materia
-dim_profesor
+- dim_alumno
+- dim_carrera
+- dim_tiempo
+- dim_materia
+- dim_profesor
 
 La tabla de hechos almacena los indicadores principales del rendimiento académico:
 
-Promedio
-Asistencia
-Accesos a Moodle
-Nivel académico
-Base de datos
+- Promedio
+- Asistencia
+- Accesos a Moodle
+- Nivel académico
 
-Nombre de la base de datos:
+## Base de datos
 
-universidad_dw
+- Nombre: universidad_dw
+- Sistema gestor: MySQL
+- Motor: InnoDB
+- Codificación: utf8mb4
 
-Sistema gestor utilizado:
+## Consultas de verificación
 
-MySQL
+Ejemplo para verificar la carga de datos:
 
-Motor:
-
-InnoDB
-
-Codificación:
-
-utf8mb4
-Consultas de verificación
-
-Ejemplo de consulta para verificar la carga de datos:
-
+```sql
 SELECT COUNT(*) AS total_registros
 FROM alumnos_limpios;
+```
 
-Ejemplo de consulta para visualizar los datos integrados en el modelo estrella:
+Ejemplo para visualizar los datos integrados en el modelo estrella:
 
+```sql
 SELECT 
     a.matricula,
     a.nombre,
@@ -166,7 +153,11 @@ INNER JOIN dim_materia m
 INNER JOIN dim_profesor p
     ON h.id_profesor = p.id_profesor
 LIMIT 20;
-Integrantes
-Nombre del integrante 1
-Nombre del integrante 2
-Nombre del integrante 3
+```
+
+## Integrantes
+
+- Brayan David Casas Morales — 22607
+- Devany Guadalupe Zapata Chávez — 22634
+- Edgar Alexis Quintero Zavaleta — 22630
+- Angel Antonio Loza Flores — 22624
